@@ -26,7 +26,7 @@
     </nav>
 
 
-    <div class="container" style="display: flex;justify-content: center;">
+    <div class="container" style="display: flex;justify-content:center;">
 
         <div class="mt-5">
             <div th:if="${message}">
@@ -35,33 +35,41 @@
             <form method="POST" enctype="multipart/form-data" th:action="@{/upload}" class="form-check-inline">
                 <div class="form-group ">
                     <label class="form-label">File to upload:</label>
-                    <input type="file" name="file" class="form-control " />
+                    <input type="file" name="file" class="form-control " accept="application/pdf" />
                 </div>
 
                 <input type="submit" value="Upload" class="btn btn-outline-primary mt-2" />
 
             </form>
-            <table class="table">
+            <table class="table" th:if="${files}">
                 <thead>
                     <tr>
                         <th>File Name</th>
                         <th>Download</th>
+                        <th>Show</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr th:each=" file : ${files} ">
                         <td>
                             <span th:href="${file}" th:text="${file.name} " />
+
                         </td>
                         <td>
                             <a th:href="@{'/files/'+${file.name}}" class="btn btn-danger mt-2 mr-2"> Download</a>
+                        </td>
+                        <td>
+                            <!-- <button onClick='document.getElementById("ifr2").src="${file.url}";'>to
+                                        open the file in a frame click here</button> -->
+                            <a th:href="@{'/pdf/'+${file.absolutePath}}" class="btn btn-danger mt-2 mr-2" target="search_iframe">Show </a>
+
                         </td>
                     </tr>
                 </tbody>
             </table>
 
-
         </div>
+
     </div>
 
 

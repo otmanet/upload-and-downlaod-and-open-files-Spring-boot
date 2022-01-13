@@ -1,5 +1,9 @@
 package com.example.fileUpload.Controller;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.net.http.HttpHeaders;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -7,9 +11,9 @@ import com.example.fileUpload.model.fileDetails;
 import com.example.fileUpload.service.StorageService;
 
 import org.springframework.beans.factory.annotation.Autowired;
-
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
-
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -52,13 +56,33 @@ public class fileUploadControll {
     public String getListFiles(Model model) {
         List<fileDetails> fileDetails = storageService.loadAll().map(path -> {
             String filename = path.getFileName().toString();
+            String dir = path.toString();
             String url = MvcUriComponentsBuilder
                     .fromMethodName(fileUploadControll.class, "getFile", path.getFileName().toString()).build()
                     .toString();
-            return new fileDetails(filename, url);
+            return new fileDetails(filename, url, dir);
         }).collect(Collectors.toList());
         model.addAttribute("files", fileDetails);
         return "uploadform";
+    }
+
+    @GetMapping(value = "/pdf/{absolutePath:.+}")
+    public ResponseEntity<InputStreamResource> getTermsConditions(@PathVariable String absolutePath)
+            throws IOException {
+        File file = storageService.load(absolutePath).getFile();
+        // String filePath = "/uploads/";
+        // String fileName = "fileName.pdf";
+        // File file = new File(filePath + name);
+        org.springframework.http.HttpHeaders headers = new org.springframework.http.HttpHeaders();
+        headers.add("content-disposition", "inline;name=" + absolutePath);
+
+        InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .contentLength(file.length())
+                .contentType(MediaType.parseMediaType("application/pdf"))
+                .body(resource);
     }
 
     @GetMapping("/files/{name:.+}")
