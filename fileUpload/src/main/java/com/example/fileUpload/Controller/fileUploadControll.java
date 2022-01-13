@@ -70,9 +70,6 @@ public class fileUploadControll {
     public ResponseEntity<InputStreamResource> getTermsConditions(@PathVariable String absolutePath)
             throws IOException {
         File file = storageService.load(absolutePath).getFile();
-        // String filePath = "/uploads/";
-        // String fileName = "fileName.pdf";
-        // File file = new File(filePath + name);
         org.springframework.http.HttpHeaders headers = new org.springframework.http.HttpHeaders();
         headers.add("content-disposition", "inline;name=" + absolutePath);
 
