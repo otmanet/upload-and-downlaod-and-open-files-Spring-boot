@@ -20,8 +20,9 @@ public class FileUploadApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		storageService.deleteAll();
-		storageService.init();
+		// when run delete all files
+		// storageService.deleteAll();
+		// storageService.init();
 	}
 
 }
